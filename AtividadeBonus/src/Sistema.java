@@ -30,6 +30,12 @@ public class Sistema {
                 case 3:
                     listarObrasDeArte();
                     break;
+                case 4:
+                    atualizarObraDeArte();
+                    break;
+                case 5:
+                    excluirObraDeArte();
+                    break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
@@ -41,6 +47,8 @@ public class Sistema {
         System.out.println("1. Cadastrar nova obra de arte");
         System.out.println("2. Buscar obra de arte");
         System.out.println("3. Listar todas as obras de arte");
+        System.out.println("4. Atualizar dados de uma obra de arte");
+        System.out.println("5. Excluir uma obra de arte");
         System.out.println("0. Sair");
         System.out.print("Escolha uma opção: ");
     }
@@ -86,6 +94,54 @@ public class Sistema {
                 System.out.println(obra.toString());
                 System.out.println("-----------------------------------");
             }
+        }
+    }
+
+    public static void atualizarObraDeArte() {
+        System.out.println("\n---- Autalizar Dados da Obra ----");
+        System.out.print("Digite o título da obra a ser atualizada: ");
+        String titulo = Console.lerString();
+        ObrasDeArte obra = buscarObraDeArte(titulo);
+        if (obra != null) {
+            System.out.println("Obra encontrada:\n" + obra.toString());
+            System.out.println("---- Atualização de Cadastro ----");
+
+            System.out.print("Digite o novo título da obra: ");
+            String novoTitulo = Console.lerString();
+            obra.setTitulo(novoTitulo);
+
+            System.out.print("Digite o novo nome do artista: ");
+            String novoArtista = Console.lerString();
+            obra.setArtista(novoArtista);
+
+            System.out.print("Digite o novo ano de criação: ");
+            int novoAnoCriacao = Console.lerInt();
+            obra.setAnoCricao(novoAnoCriacao);
+
+            System.out.print("Digite o novo tipo de obra: ");
+            String novoTipoObra = Console.lerString();
+            obra.setTipoDeObra(novoTipoObra);
+
+            System.out.print("Digite a nova localização no museu: ");
+            String novaLocalizacao = Console.lerString();
+            obra.setLocalizacaoMuseu(novaLocalizacao);
+
+            System.out.println("Dados da obra atualizados com sucesso!");
+        } else {
+            System.out.println("Obra não encontrada.");
+        }
+    }
+
+    public static void excluirObraDeArte() {
+        System.out.println("\n---- Excluir Obra de Arte ----");
+        System.out.print("Digite o título da obra a ser excluída: ");
+        String titulo = Console.lerString();
+        ObrasDeArte obra = buscarObraDeArte(titulo);
+        if (obra != null) {
+            obrasDeArteCadastradas.remove(obra);
+            System.out.println("Obra excluída com sucesso!");
+        } else {
+            System.out.println("Obra não encontrada.");
         }
     }
 }
