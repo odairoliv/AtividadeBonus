@@ -1,8 +1,4 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public abstract class GerenciadorObrasDeArte {
@@ -16,29 +12,102 @@ public abstract class GerenciadorObrasDeArte {
         }
     }
 
-    public static void apagarDados() {
-        try (FileWriter fw = new FileWriter(ARQUIVO_OBRAS);
-        BufferedWriter bw = new BufferedWriter(fw)) {
-            bw.write("");
+    public static void apagarObra(String titulo) throws Exception {
+        ArrayList<ObrasDeArte> listaObras = lerObrasDeArte();
 
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        boolean encontrou = false;
+        for (ObrasDeArte temp : listaObras) {
+            if (temp.getTitulo().equals(titulo)) {
+                listaObras.remove(temp);
+                encontrou = true;
+                break;
+            }
         }
 
+        if (!encontrou) {
+            throw new Exception("\nObra " + titulo + " não localizada!");
+        }
+
+        // sobrescrever arquivo com array list atualizado:
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARQUIVO_OBRAS, false))) {
+            for (ObrasDeArte o : listaObras) {
+                bw.write(o.formatarParaSalvar());
+                bw.newLine();
+            }
+        }
     }
 
-    public static ArrayList<ObrasDeArte> lerObrasDeArte() throws IOException {
+    public static ObrasDeArte buscarObra(String titulo) throws Exception {
+        ArrayList<ObrasDeArte> listaObras = lerObrasDeArte();
+
+        for (ObrasDeArte tempObra : listaObras) {
+            if (tempObra.getTitulo().equals(titulo)) {
+                return tempObra;
+            }
+        }
+
+        throw new Exception("\nObra " + titulo + " não localizada!");
+    }
+
+    public static void atualizarObra(String titulo, ObrasDeArte obraAtualizada) throws Exception {
+        ArrayList<ObrasDeArte> listaObras = lerObrasDeArte();
+
+        boolean encontrou = false;
+        for (int i = 0; i < listaObras.size(); i++) {
+            ObrasDeArte temp = listaObras.get(i);
+            if (temp.getTitulo().equals(titulo)) {
+                listaObras.set(i, obraAtualizada);
+                encontrou = true;
+                break;
+            }
+        }
+
+        if (!encontrou) {
+            throw new Exception("\nObra " + titulo + " não localizada!");
+        }
+
+        // Sobrescrever arquivo com array list atualizado
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARQUIVO_OBRAS, false))) {
+            for (ObrasDeArte o : listaObras) {
+                bw.write(o.formatarParaSalvar());
+                bw.newLine();
+            }
+        }
+    }
+
+    public static ArrayList<ObrasDeArte> lerObrasDeArte() throws IOException, Exception {
         ArrayList<ObrasDeArte> obrasDeArteCadastradas = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(ARQUIVO_OBRAS))) {
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] dados = linha.split(";");
 
-                ObrasDeArte obra = new ObrasDeArte(dados[0], dados[1], Integer.parseInt(dados[2]), dados[3], dados[4]);
+                ObrasDeArte obra;
+                String tipoDeObra = dados[3];
+
+                switch (tipoDeObra) {
+                    case "Pintura":
+                        obra = new Pintura(dados[0], dados[1], Integer.parseInt(dados[2]), dados[4], dados[5]);
+                        break;
+                    case "Escultura":
+                        obra = new Escultura(dados[0], dados[1], Integer.parseInt(dados[2]), dados[4], dados[5]);
+                        break;
+                    case "Fotografia":
+                        obra = new Fotografia(dados[0], dados[1], Integer.parseInt(dados[2]), dados[4], dados[5]);
+                        break;
+                    default:
+                        obra = new ObrasDeArte(dados[0], dados[1], Integer.parseInt(dados[2]), dados[3], dados[4]);
+                        break;
+                }
 
                 obrasDeArteCadastradas.add(obra);
             }
         }
+
+        if (obrasDeArteCadastradas.isEmpty()) {
+            throw new Exception("\nNão há obras cadastradas");
+        }
+
         return obrasDeArteCadastradas;
     }
 }

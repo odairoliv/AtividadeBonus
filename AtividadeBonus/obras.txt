@@ -1,4 +1,4 @@
-Teste1;Odair;2024;Pintura;Curitiba
-Teste2;Mara;2024;Pintura;Curitiba
-Test3;Erik;2024;Pintura;Curitiba
-Test4;Odair Oliveira;2024;Pintura;Curitiba
+Teste1;Odair;2024;Pintura;Curitiba;Óleo
+Teste2;Maria;2024;Escultura;Curitiba;Marmore
+Teste3;Erik;2024;Fotografia;Curitiba;Boa
+Teste4;Carol Atualizar;2024;Escultura;Curitiba;Pedra

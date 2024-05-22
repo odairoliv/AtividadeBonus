@@ -1,19 +1,10 @@
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Sistema {
-    private static ArrayList<ObrasDeArte> obrasDeArteCadastradas = new ArrayList<>();
 
     public static void iniciar() {
-        try {
-            obrasDeArteCadastradas = GerenciadorObrasDeArte.lerObrasDeArte();
-        } catch (IOException e) {
-            System.out.println("Erro ao ler obras de arte: " + e.getMessage());
-            obrasDeArteCadastradas = new ArrayList<>();
-        }
         exibirMenu();
     }
-
 
     private static void exibirMenu() {
         while (true) {
@@ -31,27 +22,22 @@ public class Sistema {
             switch (opcao) {
                 case 0:
                     System.out.println("Saindo do sistema...");
-                    finalizarSistema();
                     return;
                 case 1:
                     cadastrarObraDeArte();
                     break;
                 case 2:
-                    System.out.print("Digite o título da obra a ser buscada: ");
-                    String titulo = Console.lerString();
-                    ObrasDeArte obra = buscarObraDeArte(titulo);
-                    if (obra != null) {
-                        System.out.println("\n---- Obra encontrada ----\n" + obra.toString() + "\n");
-
-                    } else {
-                        System.out.println("Obra não encontrada.");
-                    }
+                    buscarObraDeArte();
                     break;
                 case 3:
                     listarObrasDeArte();
                     break;
                 case 4:
-                    atualizarObraDeArte();
+                    try {
+                        atualizarObraDeArte();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case 5:
                     excluirObraDeArte();
@@ -62,7 +48,7 @@ public class Sistema {
         }
     }
 
-    public static void cadastrarObraDeArte() {
+    private static void cadastrarObraDeArte() {
         System.out.println("---- Cadastro de Obras de Arte ----");
 
         System.out.print("Digite o título da obra: ");
@@ -74,43 +60,77 @@ public class Sistema {
         System.out.print("Digite o ano de criação: ");
         int anoCriacao = Console.lerInt();
 
-        System.out.print("Digite o tipo de obra: ");
-        String tipoObra = Console.lerString();
-
         System.out.print("Digite a localização no museu: ");
         String localizacao = Console.lerString();
 
-        ObrasDeArte obra = new ObrasDeArte(titulo, artista, anoCriacao, tipoObra, localizacao);
-        obrasDeArteCadastradas.add(obra);
-        System.out.println("Obra de arte cadastrada com sucesso!");
-    }
+        System.out.println("Escolha o tipo de obra:");
+        System.out.println("1. Pintura");
+        System.out.println("2. Escultura");
+        System.out.println("3. Fotografia");
+        System.out.print("Escolha uma opção: ");
+        int optipo = Console.lerInt();
 
-    public static ObrasDeArte buscarObraDeArte(String titulo) {
-        for (ObrasDeArte obra : obrasDeArteCadastradas) {
-            if (obra.getTitulo().equals(titulo)) {
-                return obra;
-            }
+        ObrasDeArte obra = null;
+
+        switch (optipo) {
+            case 1:
+                System.out.print("Digite a técnica da pintura: ");
+                String tecnica = Console.lerString();
+                obra = new Pintura(titulo, artista, anoCriacao, localizacao, tecnica);
+                break;
+            case 2:
+                System.out.print("Digite o material da escultura: ");
+                String material = Console.lerString();
+                obra = new Escultura(titulo, artista, anoCriacao, localizacao, material);
+                break;
+            case 3:
+                System.out.print("Digite o tipo de câmera da fotografia: ");
+                String tipoCamera = Console.lerString();
+                obra = new Fotografia(titulo, artista, anoCriacao, localizacao, tipoCamera);
+                break;
+            default:
+                System.out.println("Tipo de obra inválido.");
+                return;
         }
-        return null;
-    }
 
-    public static void listarObrasDeArte() {
-        if (obrasDeArteCadastradas.isEmpty()) {
-            System.out.println("Nenhuma obra de arte cadastrada.");
-        } else {
-            System.out.println("---- Lista de Obras de Arte Cadastradas ----\n");
-            for (ObrasDeArte obra : obrasDeArteCadastradas) {
-                System.out.println(obra.toString());
-                System.out.println("-----------------------------------");
-            }
+        try {
+            GerenciadorObrasDeArte.salvarObraDeArte(obra);
+            System.out.println("Obra de arte cadastrada com sucesso!");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    public static void atualizarObraDeArte() {
-        System.out.println("\n---- Autalizar Dados da Obra ----");
+    private static void buscarObraDeArte() {
+        System.out.print("Digite o título da obra a ser buscada: ");
+        String titulo = Console.lerString();
+
+        try {
+            ObrasDeArte obra = GerenciadorObrasDeArte.buscarObra(titulo);
+            System.out.println("\n---- Obra encontrada ----\n" + obra.toString() + "\n");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void listarObrasDeArte() {
+        System.out.println("\n---- Obras Cadastradas ----");
+
+        try {
+            for (ObrasDeArte obra : GerenciadorObrasDeArte.lerObrasDeArte()) {
+                System.out.println(obra);
+                System.out.println("---------------");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void atualizarObraDeArte() throws Exception {
+        System.out.println("\n---- Atualizar Dados da Obra ----");
         System.out.print("Digite o título da obra a ser atualizada: ");
         String titulo = Console.lerString();
-        ObrasDeArte obra = buscarObraDeArte(titulo);
+        ObrasDeArte obra = GerenciadorObrasDeArte.buscarObra(titulo);
         if (obra != null) {
             System.out.println("Obra encontrada:\n" + obra.toString());
             System.out.println("---- Atualização de Cadastro ----");
@@ -127,41 +147,60 @@ public class Sistema {
             int novoAnoCriacao = Console.lerInt();
             obra.setAnoCricao(novoAnoCriacao);
 
-            System.out.print("Digite o novo tipo de obra: ");
-            String novoTipoObra = Console.lerString();
-            obra.setTipoDeObra(novoTipoObra);
+            System.out.println("Escolha o tipo de obra:");
+            System.out.println("1. Pintura");
+            System.out.println("2. Escultura");
+            System.out.println("3. Fotografia");
+            int tipoEscolha = Console.lerInt();
+
+            String novoTipoObra;
+            ObrasDeArte novaObra;
+            
+            switch (tipoEscolha) {
+                case 1:
+                    novoTipoObra = "Pintura";
+                    System.out.print("Digite a nova técnica da pintura: ");
+                    String novaTecnica = Console.lerString();
+                    novaObra = new Pintura(novoTitulo, novoArtista, novoAnoCriacao, novoTipoObra, novaTecnica);
+                    break;
+                case 2:
+                    novoTipoObra = "Escultura";
+                    System.out.print("Digite o novo material da escultura: ");
+                    String novoMaterial = Console.lerString();
+                    novaObra = new Escultura(novoTitulo, novoArtista, novoAnoCriacao, novoTipoObra, novoMaterial);
+                    break;
+                case 3:
+                    novoTipoObra = "Fotografia";
+                    System.out.print("Digite o novo tipo de câmera utilizada: ");
+                    String novoTipoCamera = Console.lerString();
+                    novaObra = new Fotografia(novoTitulo, novoArtista, novoAnoCriacao, novoTipoObra, novoTipoCamera);
+                    break;
+                default:
+                    System.out.println("Tipo de obra inválido.");
+                    return;
+            }
 
             System.out.print("Digite a nova localização no museu: ");
             String novaLocalizacao = Console.lerString();
-            obra.setLocalizacaoMuseu(novaLocalizacao);
+            novaObra.setLocalizacaoMuseu(novaLocalizacao);
 
+            GerenciadorObrasDeArte.atualizarObra(titulo, novaObra);
             System.out.println("Dados da obra atualizados com sucesso!");
         } else {
             System.out.println("Obra não encontrada.");
         }
     }
 
-    public static void excluirObraDeArte() {
+    private static void excluirObraDeArte() {
         System.out.println("\n---- Excluir Obra de Arte ----");
         System.out.print("Digite o título da obra a ser excluída: ");
         String titulo = Console.lerString();
-        ObrasDeArte obra = buscarObraDeArte(titulo);
-        if (obra != null) {
-            obrasDeArteCadastradas.remove(obra);
-            System.out.println("Obra excluída com sucesso!");
-        } else {
-            System.out.println("Obra não encontrada.");
-        }
-    }
 
-    private static void finalizarSistema() {
-        GerenciadorObrasDeArte.apagarDados();
-        for (ObrasDeArte obra : obrasDeArteCadastradas) {
-            try {
-                GerenciadorObrasDeArte.salvarObraDeArte(obra);
-            } catch (IOException e) {
-                System.out.println("Erro ao salvar obra de arte: " + e.getMessage());
-            }
+        try {
+            GerenciadorObrasDeArte.apagarObra(titulo);
+            System.out.println("\nObra excluída com sucesso!");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
