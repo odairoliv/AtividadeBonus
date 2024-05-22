@@ -10,6 +10,9 @@ public class Sistema {
             int opcao = Console.lerInt();
 
             switch (opcao) {
+                case 0:
+                    System.out.println("Saindo do sistema...");
+                    return;
                 case 1:
                     cadastrarObraDeArte();
                     break;
@@ -25,8 +28,8 @@ public class Sistema {
                     }
                     break;
                 case 3:
-                    System.out.println("Saindo do sistema...");
-                    return;
+                    listarObrasDeArte();
+                    break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
@@ -37,7 +40,8 @@ public class Sistema {
         System.out.println("---- Menu de Obras de Arte ----");
         System.out.println("1. Cadastrar nova obra de arte");
         System.out.println("2. Buscar obra de arte");
-        System.out.println("3. Sair");
+        System.out.println("3. Listar todas as obras de arte");
+        System.out.println("0. Sair");
         System.out.print("Escolha uma opção: ");
     }
 
@@ -71,5 +75,17 @@ public class Sistema {
             }
         }
         return null;
+    }
+
+    public static void listarObrasDeArte() {
+        if (obrasDeArteCadastradas.isEmpty()) {
+            System.out.println("Nenhuma obra de arte cadastrada.");
+        } else {
+            System.out.println("---- Lista de Obras de Arte Cadastradas ----\n");
+            for (ObrasDeArte obra : obrasDeArteCadastradas) {
+                System.out.println(obra.toString());
+                System.out.println("-----------------------------------");
+            }
+        }
     }
 }
