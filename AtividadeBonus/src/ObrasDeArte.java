@@ -68,4 +68,8 @@ public class ObrasDeArte {
         return txt;
     }
 
+    public String formatarParaSalvar() {
+        return titulo + ";" + artista + ";" + anoCricao + ";" + tipoDeObra + ";" + localizacaoMuseu;
+    }
+
 }

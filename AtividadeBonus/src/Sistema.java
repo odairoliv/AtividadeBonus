@@ -1,17 +1,37 @@
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Sistema {
-    private static List<ObrasDeArte> obrasDeArteCadastradas = new ArrayList<>();
+    private static ArrayList<ObrasDeArte> obrasDeArteCadastradas = new ArrayList<>();
 
     public static void iniciar() {
+        try {
+            obrasDeArteCadastradas = GerenciadorObrasDeArte.lerObrasDeArte();
+        } catch (IOException e) {
+            System.out.println("Erro ao ler obras de arte: " + e.getMessage());
+            obrasDeArteCadastradas = new ArrayList<>();
+        }
+        exibirMenu();
+    }
+
+
+    private static void exibirMenu() {
         while (true) {
-            exibirMenu();
+            System.out.println("---- Menu de Obras de Arte ----");
+            System.out.println("1. Cadastrar nova obra de arte");
+            System.out.println("2. Buscar obra de arte");
+            System.out.println("3. Listar todas as obras de arte");
+            System.out.println("4. Atualizar dados de uma obra de arte");
+            System.out.println("5. Excluir uma obra de arte");
+            System.out.println("0. Sair");
+            System.out.print("Escolha uma opção: ");
+
             int opcao = Console.lerInt();
 
             switch (opcao) {
                 case 0:
                     System.out.println("Saindo do sistema...");
+                    finalizarSistema();
                     return;
                 case 1:
                     cadastrarObraDeArte();
@@ -40,17 +60,6 @@ public class Sistema {
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
-    }
-
-    private static void exibirMenu() {
-        System.out.println("---- Menu de Obras de Arte ----");
-        System.out.println("1. Cadastrar nova obra de arte");
-        System.out.println("2. Buscar obra de arte");
-        System.out.println("3. Listar todas as obras de arte");
-        System.out.println("4. Atualizar dados de uma obra de arte");
-        System.out.println("5. Excluir uma obra de arte");
-        System.out.println("0. Sair");
-        System.out.print("Escolha uma opção: ");
     }
 
     public static void cadastrarObraDeArte() {
@@ -142,6 +151,17 @@ public class Sistema {
             System.out.println("Obra excluída com sucesso!");
         } else {
             System.out.println("Obra não encontrada.");
+        }
+    }
+
+    private static void finalizarSistema() {
+        GerenciadorObrasDeArte.apagarDados();
+        for (ObrasDeArte obra : obrasDeArteCadastradas) {
+            try {
+                GerenciadorObrasDeArte.salvarObraDeArte(obra);
+            } catch (IOException e) {
+                System.out.println("Erro ao salvar obra de arte: " + e.getMessage());
+            }
         }
     }
 }
