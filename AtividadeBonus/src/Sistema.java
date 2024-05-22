@@ -1,10 +1,48 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Sistema {
-    private static ArrayList<ObrasDeArte> obrasDeArteCadastradas = new ArrayList<>();
+    private static List<ObrasDeArte> obrasDeArteCadastradas = new ArrayList<>();
+
+    public static void iniciar() {
+        while (true) {
+            exibirMenu();
+            int opcao = Console.lerInt();
+
+            switch (opcao) {
+                case 1:
+                    cadastrarObraDeArte();
+                    break;
+                case 2:
+                    System.out.print("Digite o título da obra a ser buscada: ");
+                    String titulo = Console.lerString();
+                    ObrasDeArte obra = buscarObraDeArte(titulo);
+                    if (obra != null) {
+                        System.out.println("\n---- Obra encontrada ----\n" + obra.toString() + "\n");
+
+                    } else {
+                        System.out.println("Obra não encontrada.");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Saindo do sistema...");
+                    return;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+
+    private static void exibirMenu() {
+        System.out.println("---- Menu de Obras de Arte ----");
+        System.out.println("1. Cadastrar nova obra de arte");
+        System.out.println("2. Buscar obra de arte");
+        System.out.println("3. Sair");
+        System.out.print("Escolha uma opção: ");
+    }
 
     public static void cadastrarObraDeArte() {
-        System.out.println("Cadastro de Obras de Arte");
+        System.out.println("---- Cadastro de Obras de Arte ----");
 
         System.out.print("Digite o título da obra: ");
         String titulo = Console.lerString();
@@ -22,13 +60,13 @@ public class Sistema {
         String localizacao = Console.lerString();
 
         ObrasDeArte obra = new ObrasDeArte(titulo, artista, anoCriacao, tipoObra, localizacao);
-        obrasDeArteCadastradas.add(obra); 
+        obrasDeArteCadastradas.add(obra);
         System.out.println("Obra de arte cadastrada com sucesso!");
     }
 
     public static ObrasDeArte buscarObraDeArte(String titulo) {
         for (ObrasDeArte obra : obrasDeArteCadastradas) {
-            if (obra.getTitulo().equalsIgnoreCase(titulo)) {
+            if (obra.getTitulo().equals(titulo)) {
                 return obra;
             }
         }

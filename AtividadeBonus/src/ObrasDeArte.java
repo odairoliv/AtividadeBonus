@@ -56,4 +56,16 @@ public class ObrasDeArte {
         this.localizacaoMuseu = localizacaoMuseu;
     }
 
+    @Override
+    public String toString() {
+        String txt = 
+        "Título: " + titulo + "\n" +
+        "Artista: " + artista + "\n" +
+        "Ano de Criação: " + anoCricao + "\n" +
+        "Tipo de Obra: " + tipoDeObra + "\n" +
+        "Localização no Museu: " + localizacaoMuseu;
+
+        return txt;
+    }
+
 }
