@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GerenciadorObrasDeArte {
 
@@ -110,4 +111,44 @@ public abstract class GerenciadorObrasDeArte {
 
         return obrasDeArteCadastradas;
     }
+
+    public static List<ObrasDeArte> buscarPorArtista(String artista) throws IOException, Exception {
+        ArrayList<ObrasDeArte> listaObras = lerObrasDeArte();
+        List<ObrasDeArte> resultadoBusca = new ArrayList<>();
+
+        for (ObrasDeArte obra : listaObras) {
+            if (obra.getArtista().equalsIgnoreCase(artista)) {
+                resultadoBusca.add(obra);
+            }
+        }
+
+        return resultadoBusca;
+    }
+
+    public static List<ObrasDeArte> buscarPorAno(int ano) throws IOException, Exception {
+        ArrayList<ObrasDeArte> listaObras = lerObrasDeArte();
+        List<ObrasDeArte> resultadoBusca = new ArrayList<>();
+
+        for (ObrasDeArte obra : listaObras) {
+            if (obra.getAnoCricao() == ano) {
+                resultadoBusca.add(obra);
+            }
+        }
+
+        return resultadoBusca;
+    }
+
+    public static List<ObrasDeArte> buscarPorTipo(String tipo) throws IOException, Exception {
+        ArrayList<ObrasDeArte> listaObras = lerObrasDeArte();
+        List<ObrasDeArte> resultadoBusca = new ArrayList<>();
+
+        for (ObrasDeArte obra : listaObras) {
+            if (obra.getTipoDeObra().equalsIgnoreCase(tipo)) {
+                resultadoBusca.add(obra);
+            }
+        }
+
+        return resultadoBusca;
+    }
+
 }

@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.List;
 
 public class Sistema {
 
@@ -14,6 +15,7 @@ public class Sistema {
             System.out.println("3. Listar todas as obras de arte");
             System.out.println("4. Atualizar dados de uma obra de arte");
             System.out.println("5. Excluir uma obra de arte");
+            System.out.println("6. Busca avançada");
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -41,6 +43,9 @@ public class Sistema {
                     break;
                 case 5:
                     excluirObraDeArte();
+                    break;
+                case 6:
+                    buscaAvancada();
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
@@ -199,6 +204,89 @@ public class Sistema {
         try {
             GerenciadorObrasDeArte.apagarObra(titulo);
             System.out.println("\nObra excluída com sucesso!");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void buscaAvancada() {
+        System.out.println("\n---- Busca Avançada ----");
+        System.out.println("Escolha o critério de busca:");
+        System.out.println("1. Por Artista");
+        System.out.println("2. Por Ano de Criação");
+        System.out.println("3. Por Tipo de Obra");
+        int escolha = Console.lerInt();
+
+        switch (escolha) {
+            case 1:
+                buscarPorArtista();
+                break;
+            case 2:
+                buscarPorAno();
+                break;
+            case 3:
+                buscarPorTipo();
+                break;
+            default:
+                System.out.println("Critério de busca inválido.");
+        }
+    }
+
+    private static void buscarPorArtista() {
+        System.out.print("Digite o nome do artista: ");
+        String artista = Console.lerString();
+
+        try {
+            List<ObrasDeArte> obras = GerenciadorObrasDeArte.buscarPorArtista(artista);
+            if (obras.isEmpty()) {
+                System.out.println("Nenhuma obra encontrada para o artista: " + artista);
+            } else {
+                System.out.println("\n---- Obras encontradas ----");
+                for (ObrasDeArte obra : obras) {
+                    System.out.println(obra);
+                    System.out.println("---------------");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void buscarPorAno() {
+        System.out.print("Digite o ano de criação: ");
+        int ano = Console.lerInt();
+    
+        try {
+            List<ObrasDeArte> obras = GerenciadorObrasDeArte.buscarPorAno(ano);
+            if (obras.isEmpty()) {
+                System.out.println("Nenhuma obra encontrada para o ano de criação: " + ano);
+            } else {
+                System.out.println("\n---- Obras encontradas ----");
+                for (ObrasDeArte obra : obras) {
+                    System.out.println(obra);
+                    System.out.println("---------------");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void buscarPorTipo() {
+        System.out.print("Digite o tipo de obra (Pintura, Escultura, Fotografia): ");
+        String tipo = Console.lerString();
+    
+        try {
+            List<ObrasDeArte> obras = GerenciadorObrasDeArte.buscarPorTipo(tipo);
+            if (obras.isEmpty()) {
+                System.out.println("Nenhuma obra encontrada para o tipo: " + tipo);
+            } else {
+                System.out.println("\n---- Obras encontradas ----");
+                for (ObrasDeArte obra : obras) {
+                    System.out.println(obra);
+                    System.out.println("---------------");
+                }
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
